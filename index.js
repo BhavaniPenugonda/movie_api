@@ -1,57 +1,69 @@
 const express = require('express');
 const app = express();
+let topMovies = [
+  {
+    title: 'The Dark Knight',
+    director: 'Christopher Nolan'
+  },
+  {
+    title: 'The Shawshank Redemption',
+    director: 'Frank Darabont'
+  },
+  {
+    title: 'The Godfather',
+    director: 'Francis Ford Coppola'
+  },
+  {
+    title: 'Titanic',
+    director: 'James Cameron'
+  },
+  {
+    title: 'Forrest Gump',
+    director: 'Robert Zemeckis'
+  },
+  {
+    title: 'The Matrix',
+    director: 'Wachowskis'
+  },
+  {
+    title: 'Avatar',
+    director: 'James Cameron'
+  },
+  {
+    title: 'The Departed',
+    director: 'Martin Scorsese'
+  },
+  {
+    title: 'Catch Me If You Can',
+    director: 'Steven Spielberg'
+  },
+  {
+    title: 'Pulp Fiction',
+    director: 'Quentin Tarantino'
+  }
 
-let topmovies = [
-{
-  title: 'The Dark Knight',
-  director: 'Christopher Nolan'
-},
-{
-  title:'The shawshank Redemption',
-  director: 'Frank Darabont'
-},
-{
-title: 'Avatar',
-director: 'James Cameron'
-},
-{
-  title :'The Departed',
-  director: 'Martin Scorsese'
-},
-{
-  title : 'Leave the World Behind ',
-  director: 'Sam Esmail'
-},
-{
-  title: 'Catch Me If You Can',
-  director: 'Steven Spielberg'
-},
-{
-  title: 'The Godfather',
-  Director : 'Francis Ford coppola'
-},
-{
-  title : 'Titanic',
-  director: 'James Cameron'
-},
-{
-  title: 'The Matrix',
-  director: 'Wachowskis'
-},
-{
-  title: 'Forrest Gump',
-  director: 'Robert Zemeckis'
-}
 ];
 
-//GET requests
-app.get('/',(req,res)=>{
-  res.send('Welcome to my movie club!');
+// Serve static files from the "public" directory
+app.use(express.static('public'));
+
+
+// GET requests
+app.get('/', (req, res) => {
+  res.send('Welcome to my movies club!');
 });
+
+app.get('/documentation', (req, res) => {                  
+  res.sendFile('public/documentation.html', { root: __movie_api });
+});
+
 app.get('/movies', (req, res) => {
-  res.json(topmovies);
+  res.json(topMovies);
 });
+
+
 // listen for requests
-app.listen(8080, () =>{
+app.listen(8080, () => {
   console.log('Your app is listening on port 8080.');
 });
+
