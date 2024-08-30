@@ -1,5 +1,8 @@
 const express = require('express');
+morgan = require('morgan');
 const app = express();
+
+
 let topMovies = [
   {
     title: 'The Dark Knight',
@@ -47,6 +50,8 @@ let topMovies = [
 // Serve static files from the "public" directory
 app.use(express.static('public'));
 
+// Morgan middleware to log all requests to the terminal
+app.use(morgan('common'));
 
 // GET requests
 app.get('/', (req, res) => {
@@ -61,6 +66,11 @@ app.get('/movies', (req, res) => {
   res.json(topMovies);
 });
 
+// Error-handling middleware
+app.use((err, req, res, next) => {
+	console.error('Error:', err.stack);
+	res.status(500).send('Something broke!');
+});
 
 // listen for requests
 app.listen(8080, () => {
