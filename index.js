@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 
 
-let topMovies = [
+const topMovies = [
   {
     title: 'The Dark Knight',
     director: 'Christopher Nolan'
@@ -65,6 +65,8 @@ app.get('/documentation', (req, res) => {
 app.get('/movies', (req, res) => {
   res.json(topMovies);
 });
+
+
 
 // Error-handling middleware
 app.use((err, req, res, next) => {
