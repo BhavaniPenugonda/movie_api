@@ -13,31 +13,91 @@
     movies, directors, and genres. Users will be able to sign up, update their
     personal information, and create a list of their favorite movies.
   </p>
-
-    <h2>Endpoints</h2>
-
-    <h3>1. Return a list of ALL movies</h3>
-    <p><strong>Description:</strong> Retrieves a list of all movies available in the database.</p>
-    <p><strong>URL:</strong> <code>/movies</code></p>
-    <p><strong>Method:</strong> GET</p>
-    <p><strong>Query Parameters:</strong> None</p>
-    <p><strong>Request Body:</strong> None</p>
-    <p><strong>Response Format:</strong> JSON array of movie objects</p>
-    <pre><code>
-[
+  
+  <h2>Endpoints Table</h2>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>Request</th>
+        <th>URL</th>
+        <th>Response</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Return a list of ALL movies</td>
+        <td>GET /movies</td>
+        <td>Returns a list of all movies available in the database.</td>
+      </tr>
+      <tr>
+        <td>Return data about a single movie by title</td>
+        <td>GET /movies/title/{title}</td>
+        <td>Returns detailed data (description, genre, director, image URL, featured status) about a specific movie by its title.</td>
+      </tr>
+      <tr>
+        <td>Return data about a genre by name/title</td>
+        <td>GET /genres/{genre_name}</td>
+        <td>Returns data (description) about a specific genre by its name/title.</td>
+      </tr>
+      <tr>
+        <td>Return data about a director by name</td>
+        <td>GET /directors/{director_name}</td>
+        <td>Returns data (bio, birth year, death year) about a specific director by name.</td>
+      </tr>
+      <tr>
+        <td>Allow new users to register</td>
+        <td>POST /users</td>
+        <td>Creates a new user account. Returns the details of the newly registered user.</td>
+      </tr>
+      <tr>
+        <td>Allow users to update their user info (username)</td>
+        <td>PUT /users/{user_id}</td>
+        <td>Updates the username of the specified user. Returns the updated user details.</td>
+      </tr>
+      <tr>
+        <td>Allow users to add a movie to their list of favorites</td>
+        <td>POST /users/{user_id}/favorites/{movie_id}</td>
+        <td>Adds a movie to the user's favorites list. Returns a confirmation message.</td>
+      </tr>
+      <tr>
+        <td>Allow users to remove a movie from their list of favorites</td>
+        <td>DELETE /users/{user_id}/favorites/{movie_id}</td>
+        <td>Removes a movie from the user's favorites list. Returns a confirmation message.</td>
+      </tr>
+      <tr>
+        <td>Allow existing users to deregister</td>
+        <td>DELETE /users/{user_id}</td>
+        <td>Deletes the user account. Returns a confirmation message that the user has been deregistered.</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h2>Endpoints</h2>
+  
+  <h3>1. Return a list of ALL movies</h3>
+  <p><strong>Description:</strong> Retrieves a list of all movies available in the database.</p>
+  <p><strong>URL:</strong> <code>/movies</code></p>
+  <p><strong>Method:</strong> GET</p>
+  <p><strong>Query Parameters:</strong> None</p>
+  <p><strong>Request Body:</strong> None</p>
+  <p><strong>Response Format:</strong> JSON array of movie objects</p>
+  <pre><code>
+    [
     {
-        "id": "1",
-        "title": "Inception",
-        "description": "A mind-bending thriller...",
-        "genre": "Thriller",
-        "director": "Christopher Nolan",
-        "imageUrl": "http://example.com/inception.jpg",
-        "featured": true
+      "id": "1",
+      "title": "Inception",
+      "description": "A mind-bending thriller...",
+      "genre": "Thriller",
+      "director": "Christopher Nolan",
+      "imageUrl": "http://example.com/inception.jpg",
+      "featured": true
     },
     ...
     ]
   </code></pre>
-
+  
   <h3>2. Return data about a single movie by title</h3>
   <p><strong>Description:</strong> Retrieves detailed information about a specific movie by its title.</p>
   <p><strong>URL:</strong> <code>/movies/title/{title}</code></p>
@@ -46,17 +106,17 @@
   <p><strong>Request Body:</strong> None</p>
   <p><strong>Response Format:</strong> JSON object with movie details</p>
   <pre><code>
-{
-  "id": "1",
-  "title": "Inception",
-  "description": "A mind-bending thriller...",
-  "genre": "Thriller",
-  "director": "Christopher Nolan",
-  "imageUrl": "http://example.com/inception.jpg",
-  "featured": true
-}
+    {
+      "id": "1",
+      "title": "Inception",
+      "description": "A mind-bending thriller...",
+      "genre": "Thriller",
+      "director": "Christopher Nolan",
+      "imageUrl": "http://example.com/inception.jpg",
+      "featured": true
+    }
   </code></pre>
-
+  
   <h3>3. Return data about a genre by name/title</h3>
   <p><strong>Description:</strong> Retrieves the description of a specific genre by its name.</p>
   <p><strong>URL:</strong> <code>/genres/{genre_name}</code></p>
@@ -65,12 +125,12 @@
   <p><strong>Request Body:</strong> None</p>
   <p><strong>Response Format:</strong> JSON object with genre details</p>
   <pre><code>
-{
-  "name": "Thriller",
-  "description": "A genre characterized by excitement and suspense..."
-}
+    {
+      "name": "Thriller",
+      "description": "A genre characterized by excitement and suspense..."
+    }
   </code></pre>
-
+  
   <h3>4. Return data about a director by name</h3>
   <p><strong>Description:</strong> Retrieves the biography and life details of a specific director by their name.</p>
   <p><strong>URL:</strong> <code>/directors/{director_name}</code></p>
@@ -79,14 +139,14 @@
   <p><strong>Request Body:</strong> None</p>
   <p><strong>Response Format:</strong> JSON object with director details</p>
   <pre><code>
-{
-  "name": "Christopher Nolan",
-  "bio": "An acclaimed director known for his innovative films...",
-  "birthYear": "1970",
-  "deathYear": null
-}
+    {
+      "name": "Christopher Nolan",
+      "bio": "An acclaimed director known for his innovative films...",
+      "birthYear": "1970",
+      "deathYear": null
+    }
   </code></pre>
-
+  
   <h3>5. Allow new users to register</h3>
   <p><strong>Description:</strong> Creates a new user account in the system.</p>
   <p><strong>URL:</strong> <code>/users</code></p>
@@ -94,21 +154,21 @@
   <p><strong>Query Parameters:</strong> None</p>
   <p><strong>Request Body:</strong> JSON object with user details</p>
   <pre><code>
-{
-  "username": "johndoe",
-  "password": "password123",
-  "email": "john.doe@example.com"
-}
+    {
+      "username": "johndoe",
+      "password": "password123",
+      "email": "john.doe@example.com"
+    }
   </code></pre>
   <p><strong>Response Format:</strong> JSON object with the details of the newly registered user</p>
   <pre><code>
-{
-  "id": "1",
-  "username": "johndoe",
-  "email": "john.doe@example.com"
-}
+    {
+      "id": "1",
+      "username": "johndoe",
+      "email": "john.doe@example.com"
+    }
   </code></pre>
-
+  
   <h3>6. Allow users to update their user info (username)</h3>
   <p><strong>Description:</strong> Updates the username of an existing user.</p>
   <p><strong>URL:</strong> <code>/users/{user_id}</code></p>
@@ -116,19 +176,19 @@
   <p><strong>Query Parameters:</strong> <code>user_id</code> (The ID of the user)</p>
   <p><strong>Request Body:</strong> JSON object with the new username</p>
   <pre><code>
-{
-  "username": "newusername"
-}
+    {
+      "username": "newusername"
+    }
   </code></pre>
   <p><strong>Response Format:</strong> JSON object with the updated user details</p>
   <pre><code>
-{
-  "id": "1",
-  "username": "newusername",
-  "email": "john.doe@example.com"
-}
+    {
+      "id": "1",
+      "username": "newusername",
+      "email": "john.doe@example.com"
+    }
   </code></pre>
-
+  
   <h3>7. Allow users to add a movie to their list of favorites</h3>
   <p><strong>Description:</strong> Adds a movie to the user's list of favorite movies.</p>
   <p><strong>URL:</strong> <code>/users/{user_id}/favorites/{movie_id}</code></p>
@@ -137,11 +197,11 @@
   <p><strong>Request Body:</strong> None</p>
   <p><strong>Response Format:</strong> JSON object confirming the addition of the movie</p>
   <pre><code>
-{
-  "message": "Movie has been added to favorites."
-}
+    {
+      "message": "Movie has been added to favorites."
+    }
   </code></pre>
-
+  
   <h3>8. Allow users to remove a movie from their list of favorites</h3>
   <p><strong>Description:</strong> Removes a movie from the user's list of favorite movies.</p>
   <p><strong>URL:</strong> <code>/users/{user_id}/favorites/{movie_id}</code></p>
@@ -150,11 +210,11 @@
   <p><strong>Request Body:</strong> None</p>
   <p><strong>Response Format:</strong> JSON object confirming the removal of the movie</p>
   <pre><code>
-{
-  "message": "Movie has been removed from favorites."
-}
+    {
+      "message": "Movie has been removed from favorites."
+    }
   </code></pre>
-
+  
   <h3>9. Allow existing users to deregister</h3>
   <p><strong>Description:</strong> Deletes the user account from the system.</p>
   <p><strong>URL:</strong> <code>/users/{user_id}</code></p>
@@ -163,11 +223,11 @@
   <p><strong>Request Body:</strong> None</p>
   <p><strong>Response Format:</strong> JSON object confirming the deletion of the user account</p>
   <pre><code>
-{
-  "message": "User has been deregistered."
-}
+    {
+      "message": "User has been deregistered."
+    }
   </code></pre>
-
-
+  
+  
 </body>
 </html>
