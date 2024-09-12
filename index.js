@@ -185,7 +185,7 @@ app.delete('/users/:Username/favorites/:movieID', async (req, res) => {
       });
 });
 
-//Allow existing users to deregister
+//Allow existing users to deregister using name
 app.delete('/users/:Username', async (req, res) => {
   await Users.findOneAndRemove({ Username: req.params.Username })
     .then((user) => {
