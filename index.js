@@ -150,8 +150,18 @@ app.put('/users/:Username', async (req, res) => {
 });
 
 //Allow users to add a movie to their list of favorites
-app.post('/users/:username/favorites', (req, res) => {
-  res.send('Successful POST request to add a movie to a users list of favorites.');
+app.post('/users/:Username/movies/:MovieID', async (req, res) => {
+  await Users.findOneAndUpdate({ Username: req.params.Username }, {
+     $push: { FavoriteMovies: req.params.MovieID }
+   },
+   { new: true }) 
+  .then((updatedUser) => {
+    res.json(updatedUser);
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send('Error: ' + err);
+  });
 });
 
 //Allow users to remove a movie from their list of favorites
