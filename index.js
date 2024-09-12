@@ -2,7 +2,7 @@ const express = require('express');
  const morgan = require('morgan');
 const app = express();
 app.use(express.json());
-app.use(express.urlencoded({ extended: true });
+app.use(express.urlencoded({ extended: true }));
 
 const mongoose = require('mongoose');
 const Models = require('./models.js');
@@ -129,8 +129,24 @@ app.post('/users', async (req, res) => {
 
 
 //Allow users to update their user info (username)
-app.put('/users/:username', (req, res) => {
-  res.send('Successful PUT request to update a users username.');
+app.put('/users/:Username', async (req, res) => {
+  await Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
+    {
+      Username: req.body.Username,
+      Password: req.body.Password,
+      Email: req.body.Email,
+      Birthday: req.body.Birthday
+    }
+  },
+  { new: true }) 
+  .then((updatedUser) => {
+    res.json(updatedUser);
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send('Error: ' + err);
+  });
+
 });
 
 //Allow users to add a movie to their list of favorites
