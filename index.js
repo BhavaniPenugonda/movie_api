@@ -28,10 +28,18 @@ app.get('/documentation', (req, res) => {
   res.sendFile('public/documentation.html', { root: __movie_api });
 });
 
-app.get('/movies', (req, res) => {
-  res.json(topMovies);
+// Get all movies
+app.get('/movies', async (req, res) => {
+  await Movies.find()
+    .then((movies) => {
+      res.status(201).json(movies);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
 });
-
+          
 // GET movies by name
 app.get('/movies/:title', (req,res)=>{
   res.send('Successful GET request returning data of single movie');
