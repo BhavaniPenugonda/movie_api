@@ -40,11 +40,25 @@ app.get('/movies', async (req, res) => {
     });
 });
           
-// GET movies by name
-app.get('/movies/:title', (req,res)=>{
-  res.send('Successful GET request returning data of single movie');
- });
-
+// GET data of movie  by title
+app.get('/movies/:Title', async(req,res)=>{
+  await Movies.findOne({ Title: req.params.Title })
+        .then((movie) => {
+            if (movie) {
+                res.json(movie);
+            } else {
+                res.status(404).send(
+                    'Movie with the title ' +
+                        req.params.Title +
+                        ' was not found.'
+                );
+            }
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        });
+});
 // Return Genre description
 app.get('/genre/:title',(req,res)=>{
   res.send('Successful GET request returning data on a genre.');
