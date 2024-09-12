@@ -186,8 +186,19 @@ app.delete('/users/:Username/favorites/:movieID', async (req, res) => {
 });
 
 //Allow existing users to deregister
-app.delete('/users/:username', (req, res) => {
-  res.send('Successful DELETE request to deregister an existing user.');
+app.delete('/users/:Username', async (req, res) => {
+  await Users.findOneAndRemove({ Username: req.params.Username })
+    .then((user) => {
+      if (!user) {
+        res.status(400).send(req.params.Username + ' was not found');
+      } else {
+        res.status(200).send(req.params.Username + ' was deleted.');
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
 });
 
 
