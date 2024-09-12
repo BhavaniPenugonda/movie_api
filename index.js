@@ -1,6 +1,8 @@
 const express = require('express');
  const morgan = require('morgan');
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true });
 
 const mongoose = require('mongoose');
 const Models = require('./models.js');
@@ -9,50 +11,7 @@ const Movies = Models.Movie;
 const Users = Models.User;
 
 mongoose.connect('mongodb://localhost:27017/myFlixmDB', { useNewUrlParser: true, useUnifiedTopology: true })
-
-const topMovies = [
-  {
-    title: 'The Dark Knight',
-    director: 'Christopher Nolan'
-  },
-  {
-    title: 'The Shawshank Redemption',
-    director: 'Frank Darabont'
-  },
-  {
-    title: 'The Godfather',
-    director: 'Francis Ford Coppola'
-  },
-  {
-    title: 'Titanic',
-    director: 'James Cameron'
-  },
-  {
-    title: 'Forrest Gump',
-    director: 'Robert Zemeckis'
-  },
-  {
-    title: 'The Matrix',
-    director: 'Wachowskis'
-  },
-  {
-    title: 'Avatar',
-    director: 'James Cameron'
-  },
-  {
-    title: 'The Departed',
-    director: 'Martin Scorsese'
-  },
-  {
-    title: 'Catch Me If You Can',
-    director: 'Steven Spielberg'
-  },
-  {
-    title: 'Pulp Fiction',
-    director: 'Quentin Tarantino'
-  }
-
-];
+  
 
 // Serve static files from the "public" directory
 app.use(express.static('public'));
