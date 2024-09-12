@@ -80,9 +80,25 @@ app.get('/genres/:Name',async(req,res)=>{
 
 
 //Return data about a director (bio, birth year, death year) by name
-app.get('/directors/:name', (req, res) => {
-  res.send('Successful GET request returning director data on name.');
+app.get('/directors/:Name', async (req, res) => {
+  await Movies.findOne({ 'Director.Name': req.params.Name })
+      .then((director) => {
+          if (director) {
+              res.json(director.Director);
+          } else {
+              res.status(404).send(
+                  'Director with the name ' +
+                      req.params.Name +
+                      ' was not found.'
+              );
+          }
+      })
+      .catch((err) => {
+          console.error(err);
+          res.status(500).send('Error: ' + err);
+      });
 });
+
 
 //Allow new users to register
 app.post('/users', (req, res) => {
