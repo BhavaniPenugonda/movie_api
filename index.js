@@ -2,6 +2,13 @@ const express = require('express');
  const morgan = require('morgan');
 const app = express();
 
+const mongoose = require('mongoose');
+const Models = require('./models.js');
+
+const Movies = Models.Movie;
+const Users = Models.User;
+
+
 
 const topMovies = [
   {
