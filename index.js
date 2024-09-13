@@ -150,7 +150,7 @@ app.put('/users/:Username', async (req, res) => {
 });
 
 //Allow users to add a movie to their list of favorites
-app.post('/users/:Username/movies/MovieID', async (req, res) => {
+app.post('/users/:Username/movies/:MovieID', async (req, res) => {
   await Users.findOneAndUpdate({ Username: req.params.Username }, {
      $push: { FavoriteMovies: req.params.MovieID }
    },
