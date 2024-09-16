@@ -176,7 +176,7 @@ app.post('/users/:Username/movies/:MovieID', async (req, res) => {
 });
 
 //Allow users to remove a movie from their list of favorites
-app.delete('/users/:Username/favorites/:movieID', async (req, res) => {
+app.delete('/users/:Username/movies/:movieID', async (req, res) => {
   await Users.findOneAndUpdate(
       {
           Username: req.params.Username,
