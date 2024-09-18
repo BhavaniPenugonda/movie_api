@@ -42,7 +42,10 @@ app.get('/movies', async (req, res) => {
           
 // GET data of movie  by title
 app.get('/movies/:title', async(req,res)=>{
-  await Movies.findOne({ Title: req.params.title })
+  await Movies.findOne({ 
+     
+   Title: {$regex:req.params.title,$options:'i'}
+   })// Case-insensitive regex search
         .then((movie) => {
             if (movie) {
                 res.json(movie);
@@ -62,7 +65,8 @@ app.get('/movies/:title', async(req,res)=>{
 
 // Return Genre description
 app.get('/genres/:Name',async(req,res)=>{
-  await Movies.findOne({ 'Genre.Name': req.params.Name })
+  await Movies.findOne({ 'Genre.Name':{$regex: req.params.Name,$options:'i'}
+   })
         .then((genre) => {
             if (genre) {
                 res.json(genre.Genre);
@@ -81,7 +85,8 @@ app.get('/genres/:Name',async(req,res)=>{
 
 //Return data about a director (bio, birth year, death year) by name
 app.get('/directors/:Name', async (req, res) => {
-  await Movies.findOne({ 'Director.Name': req.params.Name })
+  await Movies.findOne({ 'Director.Name':{$regex: req.params.Name , $options:'i'}
+  })
       .then((director) => {
           if (director) {
               res.json(director.Director);
@@ -112,7 +117,8 @@ app.get('/users', async (req, res) => {
 });
 //Get user details by username
 app.get('/users/:username', async(req,res)=>{
-  await Users.findOne({ Username: req.params.username })
+  await Users.findOne({ Username: {$regex:req.params.username,$options:'i'}
+   })
         .then((user) => {
             if (user) {
                 res.json(user);
@@ -132,7 +138,8 @@ app.get('/users/:username', async(req,res)=>{
 
 //Allow new users to register
 app.post('/users', async (req, res) => {
-  await Users.findOne({ Username: req.body.Username })
+  await Users.findOne({ Username:{$regex: req.body.Username,$options:'i'}
+   })
     .then((user) => {
       if (user) {
         return res.status(400).send(req.body.Username + 'already exists');
@@ -160,7 +167,8 @@ app.post('/users', async (req, res) => {
 
 //Allow users to update their user info (username)
 app.put('/users/:Username', async (req, res) => {
-  await Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
+  await Users.findOneAndUpdate({ Username:{$regex: req.params.Username,$options:'i'}
+   }, { $set:
     {
       Username: req.body.Username,
       Password: req.body.Password,
@@ -181,17 +189,15 @@ app.put('/users/:Username', async (req, res) => {
 
 //Allow users to add a movie to their list of favorites
 app.post('/users/:Username/movies/:MovieID', async (req, res) => {
- /* debugger;
-  console.log("username: ", req.params.Username);
-  console.log("movieId:", req.params.MovieID);*/
-  await Users.findOneAndUpdate({ Username: req.params.Username }, {
+  await Users.findOneAndUpdate({ Username: {$regex:req.params.Username,$options:'i'}
+   }, {
      $push: { FavoriteMovies: req.params.MovieID }
    },
    { new: true }) 
   .then((updatedUser) => {
-   /* console.log("updated user after sussess: ", updatedUser);*/
+   
     res.json(updatedUser);
-    /*console.log("logging response object", res)*/
+    
   })
   .catch((err) => {
     console.error(err);
@@ -203,7 +209,7 @@ app.post('/users/:Username/movies/:MovieID', async (req, res) => {
 app.delete('/users/:Username/movies/:movieID', async (req, res) => {
   await Users.findOneAndUpdate(
       {
-          Username: req.params.Username,
+          Username:{$regex: req.params.Username,$options:'i'},
           FavoriteMovies: req.params.movieID,
           
       },
@@ -224,7 +230,8 @@ app.delete('/users/:Username/movies/:movieID', async (req, res) => {
 //Allow existing users to deregister using name
 app.delete('/users/:username', async (req, res) => {
   
-  await Users.findOneAndDelete({Username : req.params.username })
+  await Users.findOneAndDelete({Username : {$regex:req.params.username,$options:'i'}
+   })
     .then((user) => {
       if (!user) {
         res.status(400).send(req.params.username + ' was not found');
