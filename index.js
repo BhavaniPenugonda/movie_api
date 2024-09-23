@@ -6,6 +6,7 @@ app.use(express.urlencoded({ extended: true }));
 const cors = require('cors');
 app.use(cors());
 
+const { check, validationResult } = require('express-validator');
 
 let auth = require('./auth')(app);
 
@@ -145,7 +146,15 @@ app.get('/users/:username',passport.authenticate('jwt', { session: false }),(req
 });
 
 //Allow new users to register
-app.post('/users',(req, res) => {
+app.post('/users',
+  
+//minimum value of 5 characters are only allowed
+  [
+    check('Username', 'Username is required').isLength({min: 5}),
+    check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+    check('Password', 'Password is required').not().isEmpty(),
+    check('Email', 'Email does not appear to be valid').isEmail()
+  ], (req, res) => {
   let hashedPassword = Users.hashPassword(req.body.Password);
 Users.findOne({ Username: req.body.Username
    })
