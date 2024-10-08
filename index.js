@@ -175,7 +175,7 @@ Users.findOne({ Username: req.body.Username
         Users
           .create({
             Username: req.body.Username,
-            Password: req.body.hashedPassword,
+            Password: hashedPassword,
             Email: req.body.Email,
             Birthday: req.body.Birthday
           })
