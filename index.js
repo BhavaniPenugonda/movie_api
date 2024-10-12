@@ -59,7 +59,7 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) 
 });
           
 // GET data of movie  by title
-app.get('/movies/:title', passport.authenticate('jwt', { session: false }),(req,res)=>{
+app.get('/movies/:title',passport.authenticate('jwt', { session: false }), (req,res)=>{
    Movies.findOne({ 
      
    Title: {$regex:req.params.title,$options:'i'}
