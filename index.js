@@ -1,6 +1,14 @@
+/**
+ * @fileoverview myFlix API routes for managing users and movies in the system.
+ * This file contains endpoints to get, create, update, and delete users and movies.
+ */
+
+
 const express = require('express');
  const morgan = require('morgan');
 const app = express();
+
+// Middleware setup
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const cors = require('cors');
@@ -17,9 +25,11 @@ require('./passport');
 const mongoose = require('mongoose');
 const Models = require('./models.js');
 
+// Models
 const Movies = Models.Movie;
 const Users = Models.User;
 
+// Connect to MongoDB database
 /*mongoose.connect('mongodb://127.0.0.1:27017/myFlixmDB', { useNewUrlParser: true, useUnifiedTopology: true }) */
 mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(() => {
@@ -39,15 +49,32 @@ app.use(express.static('public'));
 app.use(morgan('common'));
 
 // GET requests
+/**
+ * GET endpoint for the homepage.
+ * @route GET /
+ * @returns {string} Welcome message.
+ */
 app.get('/', (req, res) => {
   res.send('Welcome to my movies club!');
 });
 
+/**
+ * GET endpoint for the documentation page.
+ * @route GET /documentation
+ * @returns {void} Returns the documentation HTML page.
+ */
 app.get('/documentation', (req, res) => {                  
   res.sendFile('public/documentation.html', { root: __movie_api });
 });
 
 // Get all movies
+/**
+ * GET endpoint to fetch all movies.
+ * @route GET /movies
+ * @param {object} req - Express request object.
+ * @param {object} res - Express response object.
+ * @returns {Array} A list of movie objects.
+ */
 app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
  Movies.find()
     .then((movies) => {
@@ -60,6 +87,12 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) 
 });
           
 // GET data of movie  by title
+/**
+ * GET endpoint to fetch movie data by title.
+ * @route GET /movies/:title
+ * @param {string} title - The title of the movie to retrieve.
+ * @returns {object} A movie object if found, or an error message.
+ */
 app.get('/movies/:title', passport.authenticate('jwt', { session: false }),(req,res)=>{
    Movies.findOne({ 
      
@@ -83,6 +116,12 @@ app.get('/movies/:title', passport.authenticate('jwt', { session: false }),(req,
 });
 
 // Return Genre description
+/**
+ * GET endpoint to fetch a genre by name.
+ * @route GET /genres/:Name
+ * @param {string} Name - The genre name to retrieve.
+ * @returns {object} The genre object if found, or an error message.
+ */
 app.get('/genres/:Name',passport.authenticate('jwt', { session: false }),(req,res)=>{
  Movies.findOne({ 'Genre.Name':{$regex: req.params.Name,$options:'i'}
    })
@@ -157,6 +196,23 @@ app.get('/users/:username',passport.authenticate('jwt', { session: false }),(req
 });
 
 //Allow new users to register
+/**
+ * POST endpoint to allow new users to register.
+ * @route POST /users
+ * @param {string} Username - The username of the new user.
+ * @param {string} Password - The password for the new user.
+ * @param {string} Email - The email of the new user.
+ * @param {string} Birthday - The birthday of the new user.
+ * @returns {object} The newly created user object or error message.
+ * @example
+ * // Example request body:
+ * {
+ *   "Username": "john_doe",
+ *   "Password": "password123",
+ *   "Email": "john@example.com",
+ *   "Birthday": "1990-01-01"
+ * }
+ */
 app.post('/users',
   
 //minimum value of 5 characters are only allowed
@@ -246,6 +302,7 @@ app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { sess
 });
 
 //Allow users to remove a movie from their list of favorites
+
 app.delete('/users/:Username/movies/:movieID',passport.authenticate('jwt', { session: false }),(req, res) => {
 Users.findOneAndUpdate(
       {
@@ -268,6 +325,12 @@ Users.findOneAndUpdate(
 });
 
 //Allow existing users to deregister using name
+/**
+ * DELETE endpoint to deregister a user by their username.
+ * @route DELETE /users/:username
+ * @param {string} username - The username of the user to deregister.
+ * @returns {string} A success message or an error message.
+ */
 app.delete('/users/:username',passport.authenticate('jwt', { session: false }), (req, res) => {
   
 Users.findOneAndDelete({Username : req.params.username
@@ -292,7 +355,7 @@ app.use((err, req, res, next) => {
 	res.status(500).send('Something broke!');
 });
 
-// listen for requests
+//  Start the server
 const port = process.env.PORT || 8080;
 app.listen(port, '0.0.0.0',() => {
  console.log('Listening on Port ' + port);
