@@ -308,6 +308,24 @@ app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { sess
   });
 });
 
+//Endpoint to Fetch User Favorite Movies 
+app.get('/users/:Username/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
+  // Find the user by their username (you can change this to find by userId if needed)
+  Users.findOne({ Username: req.params.Username })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      // Return the user's favorite movies
+      res.json(user.FavoriteMovies);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
+});
+
+
 //Allow users to remove a movie from their list of favorites
 
 app.delete('/users/:Username/movies/:movieID',passport.authenticate('jwt', { session: false }),(req, res) => {
@@ -362,8 +380,9 @@ app.use((err, req, res, next) => {
 	res.status(500).send('Something broke!');
 });
 
-//  Start the server
+// Start the server
 const port = process.env.PORT || 8080;
-app.listen(port, '0.0.0.0',() => {
- console.log('Listening on Port ' + port);
+app.listen(port, '0.0.0.0', () => {
+  console.log('Listening on Port ' + port); 
 });
+
