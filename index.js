@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const cors = require('cors');
-let allowedOrigins = [ 'http://localhost:4200', 'https://bhavani-flixmovies.netlify.app/'];
+let allowedOrigins = [ 'http://localhost:4200', 'https://bhavani-flixmovies.netlify.app/','https://bhavanipenugonda.github.io'];
 app.use(cors());
 
 
