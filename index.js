@@ -3,7 +3,7 @@
  * This file contains endpoints to get, create, update, and delete users and movies.
  */
 
-
+require('dotenv').config();
 const express = require('express');
  const morgan = require('morgan');
 const app = express();
@@ -12,7 +12,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const cors = require('cors');
-let allowedOrigins = [ 'http://localhost:4200', 'https://bhavani-flixmovies.netlify.app/','https://bhavanipenugonda.github.io'];
+let allowedOrigins = [ 'http://localhost:4200', 'https://bhavani-flixmovies.netlify.app/','https://bhavanipenugonda.github.io','http://bhavani-myflixclient.s3-website.eu-central-1.amazonaws.com'];
 app.use(cors());
 
 
