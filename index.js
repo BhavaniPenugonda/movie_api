@@ -2,6 +2,25 @@
  * @fileoverview myFlix API routes for managing users and movies in the system.
  * This file contains endpoints to get, create, update, and delete users and movies.
  */
+const { S3Client,ListObjectsV2Command,GetObjectCommand, PutObjectCommand } = require('@aws-sdk/client-s3');
+const fs = require('fs');
+const fileUpload = require('express-fileupload');
+const stream = require('stream');
+
+
+
+// AWS S3 Client setup
+
+const s3Client = new S3Client({
+  endpoint: 'http://localhost:4566', // LocalStack endpoint 
+  region: 'us-east-1',
+  credentials: {
+    accessKeyId: 'Bhavani@2294',
+    secretAccessKey: 'Bhavani', 
+  },
+  forcePathStyle: true, // Set this for LocalStack to work properly with path-style URLs
+});
+
 
 require('dotenv').config();
 const express = require('express');
@@ -11,9 +30,10 @@ const app = express();
 // Middleware setup
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 const cors = require('cors');
-let allowedOrigins = [ 'http://localhost:4200', 'https://bhavani-flixmovies.netlify.app/','https://bhavanipenugonda.github.io','http://bhavani-myflixclient.s3-website.eu-central-1.amazonaws.com'];
-app.use(cors());
+let allowedOrigins = [ 'http://localhost:4200','http://localhost:4566', 'https://bhavani-flixmovies.netlify.app/','https://bhavanipenugonda.github.io','http://bhavani-myflixclient.s3-website.eu-central-1.amazonaws.com','http://3.124.12.171'];
+//app.use(cors());
 
 
 
@@ -60,7 +80,7 @@ app.use(express.static('public'));
 
 // Morgan middleware to log all requests to the terminal
 app.use(morgan('common'));
-
+app.use(fileUpload());
 // GET requests
 /**
  * GET endpoint for the homepage.
@@ -231,6 +251,7 @@ app.post('/users',
   ], (req, res) => {
     // check the validation object for errors
     let errors = validationResult(req);
+    console.log(errors);
 
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
@@ -372,6 +393,94 @@ Users.findOneAndDelete({Username : req.params.username
       res.status(500).send('Error: ' + err);
     });
 });
+
+// Endpoint to list all objects in the bucket
+app.get('/list', async (req, res) => {
+
+  const listObjectsParams = {
+  Bucket: 'bhavani-task2.4-local-bucket',  // Your bucket name
+  };
+
+  const listObjectsCmd = new ListObjectsV2Command(listObjectsParams);
+
+    try {
+    const data = await s3Client.send(listObjectsCmd);
+    // Send the list of objects as a response
+    res.status(200).json(data.Contents);
+    }
+    catch (error) {
+    console.error('Error listing objects:', error);
+    // Send error response
+    res.status(500).send('Failed to list objects');
+    }
+});
+
+
+
+// Endpoint to upload a file to the bucket
+app.post('/upload', async (req, res) => {
+  if (!req.files || !req.files.image) {
+    return res.status(400).send('No file uploaded.');
+  }
+
+  const file = req.files.image; // The file uploaded from the form
+  const fileName = file.name; // Extract the filename
+  const bucketName = 'bhavani-task2.4-local-bucket'; // Your S3 bucket name
+
+  // Create the parameters for uploading the file to S3
+  const uploadParams = {
+    Bucket: bucketName,
+    Key: fileName,
+    Body: file.data // The file content as the body
+  };
+
+  // Create the PutObjectCommand
+  const uploadCommand = new PutObjectCommand(uploadParams);
+
+  try {
+    // Upload the file to the S3 bucket
+    await s3Client.send(uploadCommand);
+    res.status(200).send(`File uploaded successfully: ${fileName}`);
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    res.status(500).send('Failed to upload file');
+  }
+});
+
+
+
+// Endpoint to retrieve an object from the bucket
+app.get('/download/:fileName', async (req, res) => {
+  const fileName = req.params.fileName; // Get file name from URL parameter
+  const bucketName = 'bhavani-task2.4-local-bucket'; // Your S3 bucket name
+
+  // Create the parameters for retrieving the file from S3
+  const getObjectParams = {
+    Bucket: bucketName,
+    Key: fileName
+  };
+
+  // Create the GetObjectCommand
+  const getObjectCommand = new GetObjectCommand(getObjectParams);
+
+  try {
+    // Get the object from the S3 bucket
+    const data = await s3Client.send(getObjectCommand);
+
+    // Create a readable stream from the data.Body (which is a buffer)
+    const streamPassThrough = new stream.PassThrough();
+    streamPassThrough.end(data.Body);
+    // Set the appropriate content type based on the file extension
+    res.setHeader('Content-Type', data.ContentType);
+
+    // Pipe the file to the response
+    streamPassThrough.pipe(res);
+  } catch (error) {
+    console.error('Error retrieving file:', error);
+    res.status(500).send('Failed to retrieve file');
+  }
+});
+
 
 
 // Error-handling middleware
