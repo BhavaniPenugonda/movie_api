@@ -13,7 +13,7 @@ const stream = require('stream');
 
 const s3Client = new S3Client({
   endpoint: 'http://localhost:4566', // LocalStack endpoint 
-  region: 'us-east-1',
+  region: 'eu-central-1',
   credentials: {
     accessKeyId: 'Bhavani@2294',
     secretAccessKey: 'Bhavani', 
@@ -398,7 +398,7 @@ Users.findOneAndDelete({Username : req.params.username
 app.get('/list', async (req, res) => {
 
   const listObjectsParams = {
-  Bucket: 'bhavani-task2.4-local-bucket',  // Your bucket name
+  Bucket: process.env.BUCKET_NAME,  // Your bucket name
   };
 
   const listObjectsCmd = new ListObjectsV2Command(listObjectsParams);
@@ -425,7 +425,7 @@ app.post('/upload', async (req, res) => {
 
   const file = req.files.image; // The file uploaded from the form
   const fileName = file.name; // Extract the filename
-  const bucketName = 'bhavani-task2.4-local-bucket'; // Your S3 bucket name
+  const bucketName = process.env.BUCKET_NAME; // Your S3 bucket name
 
   // Create the parameters for uploading the file to S3
   const uploadParams = {
@@ -452,7 +452,7 @@ app.post('/upload', async (req, res) => {
 // Endpoint to retrieve an object from the bucket
 app.get('/download/:fileName', async (req, res) => {
   const fileName = req.params.fileName; // Get file name from URL parameter
-  const bucketName = 'bhavani-task2.4-local-bucket'; // Your S3 bucket name
+  const bucketName = process.env.BUCKET_NAME; // Your S3 bucket name
 
   // Create the parameters for retrieving the file from S3
   const getObjectParams = {
