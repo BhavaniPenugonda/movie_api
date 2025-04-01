@@ -467,14 +467,12 @@ app.get('/download/:fileName', async (req, res) => {
     // Get the object from the S3 bucket
     const data = await s3Client.send(getObjectCommand);
 
-    // Create a readable stream from the data.Body (which is a buffer)
-    const streamPassThrough = new stream.PassThrough();
-    streamPassThrough.end(data.Body);
+    
     // Set the appropriate content type based on the file extension
     res.setHeader('Content-Type', data.ContentType);
 
     // Pipe the file to the response
-    streamPassThrough.pipe(res);
+    data.Body.pipe(res);
   } catch (error) {
     console.error('Error retrieving file:', error);
     res.status(500).send('Failed to retrieve file');
