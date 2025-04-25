@@ -6,6 +6,9 @@ const { S3Client,ListObjectsV2Command,GetObjectCommand, PutObjectCommand } = req
 const fs = require('fs');
 const fileUpload = require('express-fileupload');
 const stream = require('stream');
+const sharp = require('sharp');
+const AWS = require('aws-sdk');
+const s3 = new AWS.S3();
 
 
 
@@ -454,11 +457,22 @@ app.get('/download/:fileName', async (req, res) => {
   const fileName = req.params.fileName; // Get file name from URL parameter
   const bucketName = process.env.BUCKET_NAME; // Your S3 bucket name
 
+  // If it's a resized image, the key in S3 should start with "resized/"
+  let fileKey = fileName;
+
+  // If the image is resized, the key will have the "resized/" prefix
+  if (!fileName.startsWith('resized/')) {
+    fileKey = 'resized/' + fileName; // Add the "resized/" prefix
+  }
   // Create the parameters for retrieving the file from S3
   const getObjectParams = {
     Bucket: bucketName,
-    Key: fileName
+    Key: fileKey
   };
+
+  // Log the key being requested for debugging
+  console.log(`Fetching file from S3 with key: ${fileKey}`);
+
 
   // Create the GetObjectCommand
   const getObjectCommand = new GetObjectCommand(getObjectParams);
@@ -480,6 +494,55 @@ app.get('/download/:fileName', async (req, res) => {
 });
 
 
+
+/*
+exports.handler = async (event) => {
+    try {
+        // Extract the S3 bucket and key from the event
+        //const { bucket, key } = event;
+        const bucket = event.Records[0].s3.bucket.name;  // Get bucket name from the event
+        const key = decodeURIComponent(event.Records[0].s3.object.key.replace(/\+/g, ' '));  // Get key (path) from the event and decode it
+        console.log(`Bucket: ${bucket}`);
+        console.log(`Key: ${key}`);
+
+
+
+        // Get the image from S3
+        const s3Object = await s3.getObject({ Bucket: bucket, Key: key }).promise();
+        const imageBuffer = s3Object.Body;
+
+        // Resize the image to 200x200
+        const resizedImageBuffer = await sharp(imageBuffer)
+            .resize(200, 200)
+            .toBuffer();
+
+        // Upload the resized image back to S3
+        const uploadParams = {
+            Bucket: BUCKET_NAME,
+            Key: `resized/${key}`, // The resized image will be stored in a 'resized' folder
+            Body: resizedImageBuffer,
+            ContentType: 'image/jpeg',
+        };
+
+        const uploadResult = await s3.upload(uploadParams).promise();
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify({
+                message: 'Image resized successfully',
+                uploadedTo: uploadResult.Location,
+            }),
+        };
+    } catch (error) {
+        console.error('Error resizing image:', error);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ message: 'Error resizing the image' }),
+        };
+    }
+};
+
+*/
 
 // Error-handling middleware
 app.use((err, req, res, next) => {
