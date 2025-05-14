@@ -35,7 +35,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const cors = require('cors');
-let allowedOrigins = [ 'http://localhost:4200','http://localhost:1234','http://localhost:4566', 'https://bhavani-flixmovies.netlify.app/','https://bhavanipenugonda.github.io','http://bhavani-myflixclient.s3-website.eu-central-1.amazonaws.com','http://3.124.12.171'];
+let allowedOrigins = [ 'http://localhost:4200','http://localhost:1234','http://localhost:4566', 'https://bhavani-flixmovies.netlify.app','https://bhavanipenugonda.github.io','http://bhavani-myflixclient.s3-website.eu-central-1.amazonaws.com','http://3.124.12.171'];
 //app.use(cors());
 
 
